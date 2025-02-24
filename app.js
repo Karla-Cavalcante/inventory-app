@@ -59,6 +59,59 @@ app.post('/category/:id/add-item', async (req, res) => {
     }
 });
 
+// Rota para deletar um item do inventário
+app.post('/items/:id', async (req, res) => {
+  const itemId = req.params.id;
+  try {
+      await pool.query('DELETE FROM items WHERE id = $1', [itemId]);
+      res.redirect('back');
+  } catch (err) {
+      console.error('Erro ao deletar item:', err);
+      res.status(500).send('Erro ao deletar item');
+  }
+});
+
+// Rota para exibir todas as categorias
+app.get('/categories', async (req, res) => {
+  try {
+      const result = await pool.query('SELECT * FROM categories');
+      res.render('categories', { categories: result.rows });
+  } catch (err) {
+      console.error('Erro ao buscar categorias:', err);
+      res.status(500).send('Erro ao buscar categorias');
+  }
+});
+
+// Rota para deletar uma categoria
+app.delete('/categories/:id', async (req, res) => {
+  const categoryId = req.params.id;
+  try {
+      // Deletar itens associados à categoria (opcional)
+      await pool.query('DELETE FROM items WHERE category_id = $1', [categoryId]);
+      
+      // Deletar a categoria
+      await pool.query('DELETE FROM categories WHERE id = $1', [categoryId]);
+      
+      res.redirect('/categories');
+  } catch (err) {
+      console.error('Erro ao deletar categoria:', err);
+      res.status(500).send('Erro ao deletar categoria');
+  }
+});
+
+// Rota para exibir os itens de uma categoria específica
+app.get('/category/:id/items', async (req, res) => {
+  const categoryId = req.params.id;
+  try {
+      const { rows: items } = await pool.query('SELECT * FROM items WHERE category_id = $1', [categoryId]);
+      res.render('items', { items });
+  } catch (error) {
+      console.error('Erro ao buscar itens da categoria:', error);
+      res.status(500).send('Erro ao buscar itens da categoria');
+  }
+});
+
+
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
