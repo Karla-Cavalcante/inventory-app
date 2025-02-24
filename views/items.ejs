@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Itens da Categoria</title>
+</head>
+<body>
+    <h1>Itens Disponíveis</h1>
+    <ul>
+        <% items.forEach(item => { %>
+            <li>
+                <strong>Nome:</strong> <%= item.name %> <br>
+                <strong>Quantidade:</strong> <%= item.quantity %> <br>
+                <strong>Preço:</strong> R$ <%= item.price %> <br>
+            </li>
+        <% }) %>
+    </ul>
+
+    <a href="/category/<%= categoryId %>/add-item">Adicionar Novo Item</a><br>
+    <a href="/">Voltar às Categorias</a>
+</body>
+</html>
